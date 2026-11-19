@@ -5,8 +5,9 @@ the sister sites **theeye.vet**, **thecancer.vet** and **theexotics.vet**
 (all WordPress, Astra + Elementor). Sizes and colours were measured from those
 sites on 2 November 2026:
 
-- **Header:** full-width white header, 111 px tall, with the logo on the left. On the right: a home icon,
-  16 px uppercase Nunito menu, a phone icon and 28 px square black social icons.
+- **Header:** full-width white header, 111 px tall, with the logo on the left. On the right: a home icon
+  and the 16 px uppercase Nunito menu. (The sister sites also show a phone icon and social icons;
+  TDV leaves them out until it has a number and accounts.)
   The active page shows in yellow `#f2c941`.
 - **Home hero:** full-width 600 px media band with a large uppercase white headline.
   The sister sites use a muted clinic video here.
@@ -17,14 +18,14 @@ sites on 2 November 2026:
   "Read More →" buttons.
 - **Dark band:** a black band with dark cards for the referral section
   (theexotics.vet).
-- **Appointments:** a "For Appointment Contact" grey box with phone, WhatsApp and email.
+- **Appointments:** a "For Appointment Contact" grey box (email and the online form for now).
 - **Map:** the clinic map beside a clinic card.
 - **Inner pages:** open on a plain centred heading, with no grey title band.
 - **Forms:** underlined fields, as on theeye.vet/contact.
 - **Footer:** reversed logo and tagline, then "Pune Clinic", "Referring Vets" and
   "Connect With Us" columns, a sister-practice line, and a bottom bar.
-- **Floating buttons:** a black "Request a Tele-Consult" pill bottom left, round
-  WhatsApp / call / YouTube buttons bottom right, and a back-to-top square.
+- **Floating buttons:** a black "Request a Tele-Consult" pill bottom left and a back-to-top square.
+  The sisters' round WhatsApp / call / YouTube buttons are left out for now.
 
 The footer is `#141414`, not the sisters' `#0c0c1e`, because the reversed TDV
 logo may only sit on `#141414`. The two read the same on screen.
@@ -35,10 +36,38 @@ browsers fetch the new file.
 ## Run it locally
 
 ```
+cp .env.example .env      # first time only, then fill it in (see below)
 python3 serve.py 4173
 ```
 
-Then open http://127.0.0.1:4173
+Then open http://127.0.0.1:4173. `serve.py` serves the site and handles the forms. It needs
+Python 3.9+ and nothing else. It serves only the `.html` pages and `assets/`, never `.env` or source.
+
+## Forms and email
+
+The three forms post to `/api/enquiry` on `serve.py`, which emails them through SendGrid with the
+person's address as Reply-To, so staff can reply straight from their inbox.
+
+| Form | Page | Goes to (`.env`) | Production address |
+|---|---|---|---|
+| Request an appointment | Contact | `MAIL_TO_APPOINTMENT` | hello@thedermatology.vet |
+| Request a Tele-Consult | Services | `MAIL_TO_TELECONSULT` | hello@thedermatology.vet |
+| Send a case (with up to 10 files, 10 MB) | TDV Connect | `MAIL_TO_REFERRAL` | refer@thedermatology.vet |
+
+The mailboxes were created on 18 Nov 2026 (hello@: Lokesh Pawar; refer@ and careers@: Rashmi Bhardwaj).
+
+- **Local testing:** set all three `MAIL_TO_*` and `MAIL_FROM` to your own address, which must be a
+  verified Single Sender in SendGrid.
+- **Production:** authenticate the domain `thedermatology.vet` in SendGrid (Settings > Sender
+  Authentication, which adds a few CNAME records at GoDaddy), set `MAIL_FROM=hello@thedermatology.vet`,
+  and set the `MAIL_TO_*` addresses from the table. Run with `HOST=0.0.0.0`, behind HTTPS;
+  set `TRUST_PROXY=1` if a proxy sits in front.
+- **Protection:** server-side validation, a hidden honeypot field for bots, file type and size
+  checks, and at most 5 sent forms per visitor per 10 minutes.
+- **DNS:** the domain's email runs on Microsoft 365 (MX and SPF records at GoDaddy). When pointing the
+  domain at the hosting, change only the website records (A / CNAME for `@` and `www`). Leave MX and
+  TXT alone, or the mailboxes stop receiving mail. Add `include:sendgrid.net` to the SPF record when
+  SendGrid's domain authentication is set up.
 
 ## Editing
 
@@ -47,7 +76,7 @@ Two options — pick one and stick to it:
 1. **Edit the HTML directly.** The generated `.html` files are plain, static and
    self-contained. This is fine if you are handing the site to a web developer.
 2. **Edit `pages.py` and re-run `python3 build.py`.** Keeps the header, footer
-   and navigation identical across all 13 pages. If you take this route, do not
+   and navigation identical across all 14 pages. If you take this route, do not
    hand-edit the HTML — it will be overwritten.
 
 | File | What it is |
@@ -69,13 +98,14 @@ Search the source for `[[TODO]]`. Nothing below is cosmetic.
       It uses only public facts: her Practo and DocIndia listings and the IAVD
       webinar posters. Her three society memberships (IAVD, Asian Society,
       ESVD) were confirmed on 9 November 2026. Check the wording of her title.
-- [ ] **Phone and WhatsApp numbers** (`build.py` → `CONTACT`).
+- [ ] **Phone and WhatsApp numbers.** Removed from the site on 19 Nov 2026 while the numbers are
+      being procured. When they exist, add them back to `CONTACT` in `build.py` and to the header,
+      footer, visit card, appointment box, Clinic, Contact and TDV Connect pages.
 - [ ] **Clinic opening date and hours** (`pages.py` → `CLINIC`). The address is
       The Eye Vet's Pune address as published on theeye.vet (5th Floor, NECO
       Alpha, Pimple Nilakh, 411027). Add a unit or suite number if TDV has its own.
-- [ ] **Connect the three forms** — appointment, tele-consult, referral. All
-      three currently show an alert and submit nothing.
-- [ ] **Social media URLs** — every social icon is `href="#"`.
+- [x] **Connect the three forms.** Done on 19 Nov 2026 through SendGrid; see "Forms and email".
+- [ ] **Social media links.** Icons removed on 19 Nov 2026; waiting on Sujit for the accounts.
 - [ ] **Hero video.** The sister sites open on a 30–60 second muted clinic
       video. Film one at NECO Alpha. The slot is marked in `pages.py` (home
       page hero) and currently shows a dark placeholder behind the headline.
@@ -83,10 +113,8 @@ Search the source for `[[TODO]]`. Nothing below is cosmetic.
       as on thecancer.vet. It currently shows the TDV logo on a white panel.
 - [ ] **Service icons.** The cards use outline icons in circles, as on
       thecancer.vet. theeye.vet uses photographs instead. Either works.
-- [ ] **YouTube link** for the round red floating button, if TDV will have a
-      channel. Otherwise change that button to email.
-- [ ] **Privacy policy.** The sister sites link one from the footer bar. TDV
-      needs one before the forms collect personal data.
+- [x] **Privacy policy.** `privacy-policy.html`, linked from the footer bar. The text was approved by
+      Sheroy Wadia on 17 Nov 2026; keep it word for word.
 - [ ] **Client reviews.** The home page has a commented-out testimonials block
       in the right position. Populate it only with real, attributable reviews.
 - [ ] Add `robots.txt`, `sitemap.xml` and analytics.

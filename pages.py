@@ -6,10 +6,10 @@ One clinic to begin with: Pune, on the 5th floor of NECO Alpha, Pimple Nilakh,
 in the same premises as The Eye Vet. Co-founder: Dr Madhavi Awale.
 
 PLACEHOLDERS to replace before going live are marked with  [[TODO]]  below:
-  - phone numbers and WhatsApp number (build.py → CONTACT)
+  - phone and WhatsApp numbers: removed from the site until they are procured
   - clinic opening date and hours (CLINIC)
   - Dr Awale's photograph and her sign-off on her profile (FOUNDER)
-  - social media URLs (build.py → header/footer, href="#")
+  - social media URLs: icons removed until the accounts are shared
   - real client reviews (see the commented block in the home page)
 """
 
@@ -355,7 +355,6 @@ def build(page):
         <p class="visit-note">{CLINIC['landmark']}</p>
         <address>The Dermatology Vet<br>{addr}</address>
         <ul class="icon-rows">
-          <li>{ICON['tel']}<span><a href="tel:{CONTACT['phone_href']}">{CONTACT['phone_display']}</a> &middot; phone &amp; WhatsApp</span></li>
           <li>{ICON['mail']}<a href="mailto:{CONTACT['email']}">{CONTACT['email']}</a></li>
           <li>{ICON['clock']}<span>By appointment</span></li>
         </ul>
@@ -374,13 +373,23 @@ def build(page):
         <p class="appt-intro">{intro}</p>
         <h2>For Appointment Contact</h2>
         <ul class="icon-list">
-          <li>{ICON['tel']}<span>Pune: <a href="tel:{CONTACT['phone_href']}">{CONTACT['phone_display']}</a></span></li>
-          <li>{ICON['wa']}<a href="{CONTACT['wa_href']}"{EXT}>WhatsApp</a></li>
           <li>{ICON['mail']}<a href="mailto:{CONTACT['email']}">{CONTACT['email']}</a></li>
+          <li>{ICON['arrow']}<a href="contact.html">Request an appointment online</a></li>
         </ul>
       </div>
       {side}
     </div>"""
+
+    def form_open(kind, multipart=False):
+        enc = ' enctype="multipart/form-data"' if multipart else ""
+        return (f'<form class="form" method="post" action="/api/enquiry"{enc} data-enquiry>'
+                f'<input type="hidden" name="form" value="{kind}">'
+                '<div class="hp" aria-hidden="true"><label>Leave this field empty'
+                '<input name="website" tabindex="-1" autocomplete="off"></label></div>')
+
+    FORM_FOOT = ('<p class="form-status" role="status" aria-live="polite"></p>'
+                 '<p class="form-note">By submitting this form you agree to our '
+                 '<a href="privacy-policy.html">Privacy Policy</a>.</p>')
 
     def faq_block(items):
         rows = "".join(
@@ -528,7 +537,7 @@ def build(page):
       answer, that the animal should be seen in person.</p>
     </div>
     <div class="narrow">
-      <form class="form" method="post" action="#" onsubmit="alert('Connect this form to your booking system or inbox before launch.');return false">
+      {form_open("teleconsult")}
         <div class="form-row">
           <div class="field"><label for="t-name">Your name *</label><input id="t-name" name="name" required></div>
           <div class="field"><label for="t-phone">Phone *</label><input id="t-phone" name="phone" type="tel" required></div>
@@ -553,8 +562,7 @@ def build(page):
         <div class="field"><label for="t-treat">What has already been tried?</label>
           <textarea id="t-treat" name="treatment"></textarea></div>
         <button class="btn" type="submit">Request a Tele-Consult {ARROW}</button>
-        <p class="form-note">[[TODO]] This form is not connected. Point it at your booking system,
-        CRM or inbox before the site goes live.</p>
+        {FORM_FOOT}
       </form>
     </div>
   </div>
@@ -646,9 +654,8 @@ def build(page):
     premises, the dermatology and ophthalmology teams can see those cases together, without a second
     journey.</p>
     <h2>Appointments</h2>
-    <p>Every appointment is booked in advance. Call or WhatsApp us on
-    <a href="tel:{CONTACT['phone_href']}">{CONTACT['phone_display']}</a>, or
-    <a href="contact.html">request an appointment online</a>. Please bring previous test results and
+    <p>Every appointment is booked in advance. <a href="contact.html">Request an appointment
+    online</a> or email us at <a href="mailto:{CONTACT['email']}">{CONTACT['email']}</a>. Please bring previous test results and
     the packaging of every medication, shampoo and food your animal is on.</p>
     <h2>Coming from outside Pune</h2>
     <p>Start with a <a href="service-teleconsult.html">tele-consult</a>. If you are a veterinarian, send
@@ -666,14 +673,15 @@ def build(page):
         page_head("TDV Connect",
             "Send us a skin, ear or allergy case. A dermatologist replies in writing within two working days, "
             "and the patient stays yours.",
-            btn("Send a case", "#refer") + btn("WhatsApp photos", CONTACT['wa_href'], extra=EXT)) + f"""
+            btn("Send a case", "#refer")) + f"""
 <section class="section">
   <div class="wrap">
     <div class="section-head"><h2>Three steps, two working days</h2></div>
     <ol class="steps">
       <li><span class="step-n">1</span><h3>Send the case</h3>
-        <p>Use the form below or WhatsApp us. A few lines of history and good photographs are enough to
-        start; cytology images and lab results help.</p></li>
+        <p>Use the form below or email <a href="mailto:{CONTACT['referrals']}">{CONTACT['referrals']}</a>.
+        A few lines of history and good photographs are enough to start; cytology images and lab
+        results help.</p></li>
       <li><span class="step-n">2</span><h3>Get a written plan</h3>
         <p>Within two working days: what we think it is, the next test worth doing, and a treatment plan
         with doses.</p></li>
@@ -712,14 +720,14 @@ def build(page):
     <div class="section-head"><h2>Send a case</h2>
     <p>It takes about five minutes. Photographs taken in daylight help most: the whole animal first, then
     each affected area close up.</p></div>
-    <form class="form" method="post" action="#" enctype="multipart/form-data" onsubmit="alert('Connect this form to your referral inbox before launch.');return false">
+    {form_open("referral", multipart=True)}
       <div class="form-row">
         <div class="field"><label for="r-vet">Your name *</label><input id="r-vet" name="vet" required></div>
         <div class="field"><label for="r-practice">Practice and city *</label><input id="r-practice" name="practice" required></div>
       </div>
       <div class="form-row">
         <div class="field"><label for="r-email">Email *</label><input id="r-email" name="email" type="email" required></div>
-        <div class="field"><label for="r-phone">Phone or WhatsApp</label><input id="r-phone" name="phone" type="tel"></div>
+        <div class="field"><label for="r-phone">Phone</label><input id="r-phone" name="phone" type="tel"></div>
       </div>
       <div class="form-row">
         <div class="field"><label for="r-type">What do you need?</label>
@@ -730,10 +738,10 @@ def build(page):
       <div class="field"><label for="r-case">The case in a few lines *</label>
         <textarea id="r-case" name="case" required placeholder="Age and breed, how long it has been going on, what it looks like, what has been tried and what changed"></textarea></div>
       <div class="field"><label for="r-files">Photographs and results</label>
-        <input id="r-files" name="files" type="file" multiple accept="image/*,.pdf"></div>
+        <input id="r-files" name="files" type="file" multiple accept="image/jpeg,image/png,image/heic,image/webp,.pdf">
+        <p class="field-help">Up to 10 files, 10 MB in total. JPG, PNG, HEIC, WebP or PDF.</p></div>
       <button class="btn" type="submit">Send case {ARROW}</button>
-      <p class="form-note">[[TODO]] Not connected. Point this at {CONTACT['referrals']} or your
-      practice management system.</p>
+      {FORM_FOOT}
     </form>
   </div></div>
 </section>
@@ -791,8 +799,6 @@ def build(page):
           <ul class="icon-rows"><li>{ICON['pin']}<a href="{CLINIC['maps']}"{EXT}>Get directions</a></li></ul></div>
         <div class="info-block"><h3>Appointments</h3>
           <ul class="icon-rows">
-            <li>{ICON['tel']}<a href="tel:{CONTACT['phone_href']}">{CONTACT['phone_display']}</a></li>
-            <li>{ICON['wa']}<a href="{CONTACT['wa_href']}"{EXT}>WhatsApp</a></li>
             <li>{ICON['mail']}<a href="mailto:{CONTACT['email']}">{CONTACT['email']}</a></li>
           </ul></div>
         <div class="info-block"><h3>Referring vets</h3>
@@ -805,7 +811,7 @@ def build(page):
         <h2 class="form-title">Request an appointment</h2>
         <p>Tell us about the problem and we will come back with the first available appointment, or a
         tele-consult if that is the better place to start.</p>
-        <form class="form" method="post" action="#" onsubmit="alert('Connect this form to your booking system or inbox before launch.');return false">
+        {form_open("appointment")}
           <div class="form-row">
             <div class="field"><label for="c-name">Your name *</label><input id="c-name" name="name" required></div>
             <div class="field"><label for="c-phone">Phone *</label><input id="c-phone" name="phone" type="tel" required></div>
@@ -823,8 +829,7 @@ def build(page):
           <div class="field"><label for="c-problem">What is the problem, and how long has it been going on? *</label>
             <textarea id="c-problem" name="problem" required></textarea></div>
           <button class="btn" type="submit">Request appointment {ARROW}</button>
-          <p class="form-note">[[TODO]] Not connected. Point this at your booking system or
-          {CONTACT['email']} before launch.</p>
+          {FORM_FOOT}
         </form>
       </div>
     </div>
@@ -837,5 +842,67 @@ def build(page):
   </div></div>
 </section>
 """))
+
+    # ---------------- Privacy Policy ----------------
+    # Text approved by Sheroy Wadia on 17 Nov 2026 ("Privacy Policy for The Dermatology Vet").
+    # Keep it word for word; only the contact email in point 11 was filled in.
+    written.append(page("privacy-policy.html", "Privacy Policy &ndash; The Dermatology Vet",
+        "How The Dermatology Vet collects, uses and safeguards your personal data when you use "
+        "thedermatology.vet.",
+        page_head("Privacy Policy", "The Dermatology Vet") + f"""
+<section class="section">
+  <div class="wrap"><div class="prose policy">
+    <h2>1. Introduction</h2>
+    <p>Welcome to the website of The Dermatology Vet, a specialist veterinary skin, ear and allergy
+    service. This Privacy Policy outlines how we collect, use, and safeguard your personal data while you
+    interact with our website.</p>
+    <h2>2. Information We Collect</h2>
+    <p><strong>Personal Information:</strong> We may gather personal details such as your name, phone
+    number, email address, and details of your pet&rsquo;s condition when you fill out forms, refer a
+    case, or contact us through our website.</p>
+    <p><strong>Usage Data:</strong> Our site automatically collects usage data like IP addresses, browser
+    types, and pages visited to enhance your user experience and improve our website.</p>
+    <h2>3. Use of Collected Information</h2>
+    <p>We utilize the collected data for the following:</p>
+    <ul>
+      <li>To respond to your queries and arrange appointments, tele-consults and referrals.</li>
+      <li>To stay in touch with you about your pet&rsquo;s care.</li>
+      <li>To improve our website&rsquo;s content and features.</li>
+    </ul>
+    <h2>4. Information Sharing</h2>
+    <p>We neither sell nor trade or rent your personal information to external parties. However, we
+    might share your data under specific conditions:</p>
+    <ul>
+      <li>With your own veterinarian, as part of your pet&rsquo;s care.</li>
+      <li>With trusted third parties who assist us in managing our website and services.</li>
+      <li>To comply with legal obligations, such as court orders or subpoenas.</li>
+      <li>To protect our rights, privacy, and safety, as well as those of our users.</li>
+    </ul>
+    <h2>5. Data Security</h2>
+    <p>We implement industry-standard security protocols to protect your personal data from unauthorized
+    access or modification. However, please note that no online transaction is entirely secure.</p>
+    <h2>6. Cookies and Tracking Technologies</h2>
+    <p>Our website employs cookies and similar technologies to improve your experience and collect usage
+    data. You can manage these through your browser settings.</p>
+    <h2>7. Third-Party Links</h2>
+    <p>Our website may link to other third-party sites. We are not liable for their privacy policies, and
+    we recommend that you review their privacy statements.</p>
+    <h2>8. Children&rsquo;s Privacy</h2>
+    <p>Our website is intended for users who are above the age of 18. We do not knowingly collect
+    information from minors.</p>
+    <h2>9. Your Choices</h2>
+    <ul>
+      <li>Update or remove your personal data by contacting us.</li>
+      <li>Control cookies via your browser settings.</li>
+    </ul>
+    <h2>10. Changes to the Privacy Policy</h2>
+    <p>We may periodically update this Privacy Policy. All changes will be published here, and the
+    &ldquo;Last Updated&rdquo; timestamp will be modified accordingly.</p>
+    <h2>11. Contact Us</h2>
+    <p>For any questions or concerns regarding your privacy and data, feel free to contact us at
+    <a href="mailto:{CONTACT['email']}">{CONTACT['email']}</a>.</p>
+  </div></div>
+</section>
+""", active="privacy-policy.html"))
 
     return written

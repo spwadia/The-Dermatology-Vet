@@ -7,7 +7,8 @@ group (theeye.vet, thecancer.vet, theexotics.vet): full-width white header with
 a home icon and square social icons, a full-width media hero, centred Nunito
 headings, grey #f5f5f5 cards with black "Read More" buttons, a "For Appointment
 Contact" box, clinic columns in the footer, and the same floating tele-consult
-pill and round WhatsApp / call / YouTube buttons.
+pill. Phone, WhatsApp and social links are left out until the numbers and
+accounts exist; see README.
 
 Run:  python3 build.py
 Output: plain static .html files in this folder. Edit the content in pages.py
@@ -17,7 +18,7 @@ import os
 import pages as P
 
 OUT = os.path.dirname(os.path.abspath(__file__))
-CSS_VERSION = "5"  # bump when assets/styles.css changes, so browsers fetch the new file
+CSS_VERSION = "6"  # bump when assets/styles.css changes, so browsers fetch the new file
 
 # --------------------------------------------------------------------------
 NAV = [
@@ -55,10 +56,9 @@ ICON = {
 "img": '<svg viewBox="0 0 24 24" fill="none" stroke="#67768e" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="m3.5 17.5 5-4.5 4 3.4 3-2.4 5 4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 }
 
+# Phone and WhatsApp are deliberately absent: the numbers are still being procured
+# (Abhijit Mane, 18 Nov 2026). Social links are absent until the accounts are shared.
 CONTACT = {
-    "phone_display": "+91 XXXXX XXXXX",
-    "phone_href": "+91XXXXXXXXXX",
-    "wa_href": "https://wa.me/91XXXXXXXXXX",
     "email": "hello@thedermatology.vet",
     "referrals": "refer@thedermatology.vet",
     "careers": "careers@thedermatology.vet",
@@ -95,7 +95,6 @@ def header(active):
     for label, href in NAV[1:]:
         cls = ' class="active"' if href == active else ''
         parts.append('<a href="%s"%s>%s</a>' % (href, cls, label))
-    parts.append('<a class="nav-tel" href="tel:%s" aria-label="Call us">%s</a>' % (CONTACT["phone_href"], ICON["tel"]))
     links = "".join(parts)
     return f"""
 <header class="site-header" id="top">
@@ -108,12 +107,6 @@ def header(active):
     </button>
     <nav class="nav" id="nav">
       {links}
-      <span class="nav-social">
-        <a href="#" aria-label="YouTube">{ICON['yt']}</a>
-        <a href="#" aria-label="Instagram">{ICON['ig']}</a>
-        <a href="#" aria-label="LinkedIn">{ICON['li']}</a>
-        <a href="#" aria-label="Facebook">{ICON['fb']}</a>
-      </span>
     </nav>
   </div>
 </header>"""
@@ -136,7 +129,6 @@ def footer():
         <h3>Pune Clinic</h3>
         <p>The Dermatology Vet<br>{addr}<br>{P.CLINIC['landmark']}</p>
         <ul class="f-icons">
-          <li>{ICON['tel']}<a href="tel:{CONTACT['phone_href']}">{CONTACT['phone_display']}</a></li>
           <li>{ICON['mail']}<a href="mailto:{CONTACT['email']}">{CONTACT['email']}</a></li>
           <li>{ICON['pin']}<a href="{P.CLINIC['maps']}" target="_blank" rel="noopener">Get directions</a></li>
         </ul>
@@ -153,12 +145,11 @@ def footer():
       </div>
       <div>
         <h3>Connect With Us</h3>
-        <div class="f-social">
-          <a href="#" aria-label="Facebook">{ICON['fb']}</a>
-          <a href="#" aria-label="Instagram">{ICON['ig']}</a>
-          <a href="#" aria-label="LinkedIn">{ICON['li']}</a>
-          <a href="#" aria-label="YouTube">{ICON['yt']}</a>
-        </div>
+        <p>Questions, appointments and tele-consults:</p>
+        <ul class="f-icons f-connect">
+          <li>{ICON['mail']}<a href="mailto:{CONTACT['email']}">{CONTACT['email']}</a></li>
+          <li>{ICON['arrow']}<a href="contact.html">Request an appointment</a></li>
+        </ul>
         <a class="pill" href="contact.html#teleconsult">{ICON['headset']} Request a Tele-Consult</a>
       </div>
     </div>
@@ -172,16 +163,12 @@ def footer():
       Every case is referred back to its own veterinarian. We take no referral commission in either direction.
     </div>
   </div>
-  <div class="footer-bar">All Rights Reserved 2026 | The Dermatology Vet | A VHI company</div>
+  <div class="footer-bar">All Rights Reserved 2026 | The Dermatology Vet | A VHI company | <a href="privacy-policy.html">Privacy Policy</a></div>
 </footer>
 
 <a class="tele-tab" href="contact.html#teleconsult">{ICON['headset']} <span><span class="tt-long">Request a </span>Tele-Consult</span></a>
-<div class="float-contact">
-  <a class="fc-wa" href="{CONTACT['wa_href']}" aria-label="WhatsApp" target="_blank" rel="noopener">{ICON['wa']}</a>
-  <a class="fc-tel" href="tel:{CONTACT['phone_href']}" aria-label="Call">{ICON['tel']}</a>
-  <a class="fc-yt" href="#" aria-label="YouTube">{ICON['yt']}</a>
-</div>
 <a class="to-top" href="#top" aria-label="Back to top">{ICON['up']}</a>
+<script src="assets/forms.js?v={CSS_VERSION}" defer></script>
 </body>
 </html>"""
 

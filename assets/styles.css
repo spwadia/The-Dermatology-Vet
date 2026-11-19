@@ -45,10 +45,6 @@ svg{flex:none}
 .nav > a{font-size:16px;font-weight:600;text-transform:uppercase;color:#000;padding:0 15px;line-height:111px;white-space:nowrap}
 .nav > a:hover,.nav > a.active{color:var(--yellow);text-decoration:none}
 .nav .nav-home svg{width:21px;height:21px;fill:var(--indigo);vertical-align:-4px}
-.nav .nav-tel svg{width:16px;height:16px;fill:#000;vertical-align:-2px}
-.nav-social{display:flex;gap:15px;align-items:center;margin-left:30px}
-.nav-social a{width:28px;height:28px;display:grid;place-items:center;background:#000;border-radius:4px}
-.nav-social svg{width:16px;height:16px;fill:#fff}
 
 .nav-toggle{display:none;background:none;border:0;padding:8px;cursor:pointer}
 .nav-toggle span{display:block;width:24px;height:2px;background:#000;margin:5px 0}
@@ -87,6 +83,7 @@ svg{flex:none}
 }
 .btn svg{width:13px;height:13px;fill:currentColor}
 .btn:hover{background:#2b2b2b;color:#fff;text-decoration:none}
+.btn[disabled]{opacity:.55;cursor:wait}
 .btn-light{background:#fff;color:#000}
 .btn-light:hover{background:var(--yellow);color:#000}
 .actions{display:flex;gap:12px;flex-wrap:wrap}
@@ -198,6 +195,7 @@ svg{flex:none}
 .prose ul li::before{content:'';position:absolute;left:0;top:.62em;width:10px;height:10px;border-radius:50%;border:3px solid var(--yellow)}
 .prose ol{margin:0 0 20px;padding-left:22px}
 .prose ol li{margin-bottom:9px}
+.policy h2{font-size:22px;margin:30px 0 8px}
 .prose .lead{font-size:19px;line-height:1.75}
 .callout{background:var(--card);border-radius:8px;padding:22px 26px;margin:26px 0}
 .section.band .callout{background:#fff}
@@ -217,6 +215,12 @@ svg{flex:none}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#000;box-shadow:0 1px 0 #000}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:30px}
 .form-note{font-size:13px;color:var(--muted);margin-top:14px}
+.field-help{font-size:13px;color:var(--muted);margin:2px 0 0}
+.hp{position:absolute !important;left:-10000px;width:1px;height:1px;overflow:hidden}
+.form-status{margin:16px 0 0;font-size:15px;font-weight:600}
+.form-status:empty{display:none}
+.form-status.ok{color:#1d6b35}
+.form-status.err{color:#b3261e}
 .form-title{font-size:20px;font-weight:700;color:#000;margin:0 0 4px}
 
 /* ---------- Contact ---------- */
@@ -247,9 +251,7 @@ svg{flex:none}
 .f-icons{list-style:none;margin:12px 0 0;padding:0}
 .f-icons li{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .f-icons svg{width:15px;height:15px;fill:#fff}
-.f-social{display:flex;gap:10px;margin:6px 0 18px}
-.f-social a{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center}
-.f-social svg{width:16px;height:16px;fill:var(--tdv-black)}
+.f-connect{margin:4px 0 18px}
 .pill{display:inline-flex;align-items:center;gap:10px;white-space:nowrap;background:#fff;color:#000 !important;border-radius:200px;padding:8px 18px;font-family:Poppins,Nunito,sans-serif;font-weight:600;font-size:13px}
 .pill svg{width:18px;height:18px;fill:#000}
 .pill:hover{text-decoration:none;background:var(--yellow)}
@@ -267,12 +269,6 @@ svg{flex:none}
 }
 .tele-tab:hover{color:#fff;text-decoration:none;background:#1f1f1f}
 .tele-tab svg{width:24px;height:24px;fill:#fff}
-.float-contact{position:fixed;right:64px;bottom:25px;z-index:80;display:flex;gap:12px}
-.float-contact a{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.22)}
-.float-contact svg{width:20px;height:20px;fill:#fff}
-.fc-wa{background:#25d366}
-.fc-tel{background:#6c757d}
-.fc-yt{background:#d0312d}
 .to-top{position:fixed;right:18px;bottom:32px;z-index:80;width:28px;height:28px;border-radius:2px;background:#3b66d6;display:grid;place-items:center}
 .to-top svg{width:14px;height:14px;fill:#fff}
 
@@ -287,7 +283,6 @@ svg{flex:none}
     padding:6px 20px 18px;box-shadow:0 10px 24px rgba(0,0,0,.1);
   }
   .nav.open > a{line-height:1.4;padding:12px 0;border-bottom:1px solid var(--line)}
-  .nav.open .nav-social{margin:14px 0 0}
   .nav-toggle{display:block}
   .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -321,7 +316,5 @@ svg{flex:none}
   .tt-long{display:none}
   .intro-media{aspect-ratio:16/8}
   .tele-tab svg{width:20px;height:20px}
-  .float-contact{right:52px;bottom:18px;gap:8px}
-  .float-contact a{width:36px;height:36px}
   .to-top{right:12px;bottom:22px}
 }
